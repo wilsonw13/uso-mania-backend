@@ -1,21 +1,34 @@
 {
- "scripts": {
-  "dev": "nodemon app.js",
-  "start": "node app.js"
- },
- "dependencies": {
-  "cors": "^2.8.5",
-  "dotenv": "^16.0.0",
-  "express": "^4.18.1",
-  "express-jwt": "6.1",
-  "express-jwt-authz": "^2.4.1",
-  "express-openid-connect": "^2.7.2",
-  "jsonwebtoken": "^8.5.1",
-  "jwks-rsa": "^2.1.2",
-  "mongoose": "^6.3.1",
-  "slugify": "^1.6.5"
- },
- "devDependencies": {
-  "nodemon": "^2.0.16"
- }
+  "name": "uso-mania-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon app.ts",
+    "start": "node app.ts",
+    "migrate": "npx prisma migrate dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wilsonw13/uso-mania-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wilsonw13/uso-mania-backend/issues"
+  },
+  "homepage": "https://github.com/wilsonw13/uso-mania-backend#readme",
+  "dependencies": {
+    "@prisma/client": "^4.1.1",
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^18.6.4",
+    "nodemon": "^2.0.19",
+    "prisma": "^4.1.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
+  }
 }

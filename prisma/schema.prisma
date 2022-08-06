@@ -1,0 +1,83 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("PRODUCTION_DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model User {
+  userId    String   @id
+  username  String   @unique
+  pfpId     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  settings          UserSettings?
+  UserPlayedBeatmap UserPlayedBeatmap[]
+}
+
+model UserSettings {
+  user   User   @relation(fields: [userId], references: [userId])
+  userId String @id
+
+  volumeMaster   Float @default(1)
+  volumeMusic    Float @default(0.5)
+  volumeHitSound Float @default(0.5)
+
+  scrollSpeed Int @default(10)
+
+  keys1 String @default(" ")
+  keys2 String @default("FJ")
+  keys3 String @default("F J")
+  keys4 String @default("DFJK")
+  keys5 String @default("DF JK")
+  keys6 String @default("SDFJKL")
+  keys7 String @default("SDF JKL")
+  keys8 String @default("ASDFJKL;")
+  keys9 String @default("ASDF JKL;")
+}
+
+model UserPlayedBeatmap {
+  user User @relation(fields: [userId], references: [userId])
+
+  userId       String
+  beatmapSetId Int
+  beatmapId    Int
+
+  highestScore    Int
+  highestAccuracy Float
+  highestMaxCombo Int
+  highestGrade    Grade
+  playCount       Int
+
+  entries UserScoreEntry[]
+
+  @@id([userId, beatmapSetId, beatmapId])
+}
+
+model UserScoreEntry {
+  id Int @id @default(autoincrement())
+
+  beatmap UserPlayedBeatmap @relation(fields: [userId, beatmapSetId, beatmapId], references: [userId, beatmapSetId, beatmapId])
+
+  userId       String
+  beatmapSetId Int
+  beatmapId    Int
+
+  score    Int
+  accuracy Float
+  maxCombo Int
+  grade    Grade
+}
+
+enum Grade {
+  SS
+  S
+  A
+  B
+  C
+  D
+}
