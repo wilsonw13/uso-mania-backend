@@ -16,12 +16,13 @@ model User {
   createdAt DateTime @default(now())
 
   settings          UserSettings?
+  stats             UserStats?
   UserPlayedBeatmap UserPlayedBeatmap[]
 }
 
 model UserSettings {
-  user   User   @relation(fields: [userId], references: [userId])
   userId String @id
+  user   User   @relation(fields: [userId], references: [userId])
 
   volumeMaster   Float @default(1)
   volumeMusic    Float @default(0.5)
@@ -38,6 +39,22 @@ model UserSettings {
   keys7 String @default("SDF JKL")
   keys8 String @default("ASDFJKL;")
   keys9 String @default("ASDF JKL;")
+}
+
+model UserStats {
+  userId String @id
+  user   User   @relation(fields: [userId], references: [userId])
+
+  averageScore    Int   @default(0)
+  averageAccuracy Float @default(0)
+  playCountUnique Int   @default(0)
+
+  SS Int @default(0)
+  S  Int @default(0)
+  A  Int @default(0)
+  B  Int @default(0)
+  C  Int @default(0)
+  D  Int @default(0)
 }
 
 model UserPlayedBeatmap {

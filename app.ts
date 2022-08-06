@@ -1,7 +1,9 @@
 /* import { express, NextFunction, Request, Response } from "express"; */
 
+import { PrismaClient } from "@prisma/client";
+
 const express = require("express");
-const { PrismaClient } = require("@prisma/client");
+// const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 /* const app = express();
@@ -49,13 +51,34 @@ app.delete("/user/:id", async (req, res) => {
 const server = app.listen(3000);
  */
 
-async function main() {
-  const users = await prisma.user.findMany();
+async function createAccount() {
+  await prisma.user.deleteMany();
+  await prisma.userSettings.deleteMany();
+  await prisma.userStats.deleteMany();
 
-  console.log(users);
+  const user = await prisma.user.create({
+    data: {
+      userId: "1309",
+      username: "wilson",
+      settings: {
+        create: {},
+      },
+      stats: {
+        create: {},
+      },
+    },
+  });
+
+  console.log(user);
+
+  const settings = await prisma.userSettings.findMany();
+  console.log(settings);
+
+  const stats = await prisma.userStats.findMany();
+  console.log(stats);
 }
 
-main()
+createAccount()
   .catch((e) => {
     console.error(e.message);
   })
