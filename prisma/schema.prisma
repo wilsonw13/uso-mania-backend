@@ -12,7 +12,6 @@ datasource db {
 model User {
   userId    String   @id
   username  String   @unique
-  pfpId     Int      @default(0)
   createdAt DateTime @default(now())
 
   settings          UserSettings?
@@ -22,7 +21,9 @@ model User {
 
 model UserSettings {
   userId String @id
-  user   User   @relation(fields: [userId], references: [userId])
+  user   User?  @relation(fields: [userId], references: [userId])
+
+  pfpId Int @default(0)
 
   volumeMaster   Float @default(1)
   volumeMusic    Float @default(0.5)
@@ -47,6 +48,7 @@ model UserStats {
 
   averageScore    Int   @default(0)
   averageAccuracy Float @default(0)
+  highestMaxCombo Float @default(0)
   playCountUnique Int   @default(0)
 
   SS Int @default(0)
@@ -67,7 +69,7 @@ model UserPlayedBeatmap {
   highestScore    Int
   highestAccuracy Float
   highestMaxCombo Int
-  highestGrade    Grade
+  highestGrade    String
   playCount       Int
 
   entries UserScoreEntry[]
@@ -87,14 +89,5 @@ model UserScoreEntry {
   score    Int
   accuracy Float
   maxCombo Int
-  grade    Grade
-}
-
-enum Grade {
-  SS
-  S
-  A
-  B
-  C
-  D
+  grade    String
 }
