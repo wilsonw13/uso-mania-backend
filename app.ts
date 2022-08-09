@@ -53,23 +53,30 @@ const prisma = new PrismaClient();
 
 async function log() {
   try {
-    const users = await prisma.user.findMany();
-    fs.writeFileSync("logs/users.json", JSON.stringify(users));
-
-    const settings = await prisma.userSettings.findMany();
-    fs.writeFileSync("logs/userSettings.json", JSON.stringify(settings));
-
-    const stats = await prisma.userStats.findMany();
-    fs.writeFileSync("logs/userStats.json", JSON.stringify(stats));
-
-    const playedBeatmaps = await prisma.userPlayedBeatmap.findMany();
     fs.writeFileSync(
-      "logs/playedBeatmaps.json",
-      JSON.stringify(playedBeatmaps)
+      "logs/users.json",
+      JSON.stringify(await prisma.user.findMany())
     );
 
-    const scoreEntries = await prisma.userScoreEntry.findMany();
-    fs.writeFileSync("logs/scoreEntries.json", JSON.stringify(scoreEntries));
+    fs.writeFileSync(
+      "logs/userSettings.json",
+      JSON.stringify(await prisma.userSettings.findMany())
+    );
+
+    fs.writeFileSync(
+      "logs/userStats.json",
+      JSON.stringify(await prisma.userStats.findMany())
+    );
+
+    fs.writeFileSync(
+      "logs/playedBeatmaps.json",
+      JSON.stringify(await prisma.userPlayedBeatmap.findMany())
+    );
+
+    fs.writeFileSync(
+      "logs/scoreEntries.json",
+      JSON.stringify(await prisma.userScoreEntry.findMany())
+    );
   } catch (e) {
     console.error(e.message);
   }
@@ -91,8 +98,6 @@ async function resetDatabase() {
   ]);
 }
 
-// Actual
-
 async function createUser(id: string, givenUsername: string) {
   try {
     await prisma.user.create({
@@ -104,6 +109,57 @@ async function createUser(id: string, givenUsername: string) {
         },
         stats: {
           create: {},
+        },
+      },
+    });
+  } catch (e) {
+    console.error(e.message);
+  } finally {
+    prisma.$disconnect;
+  }
+}
+
+async function updateUser(
+  id: string,
+  userObj: {
+    pfpId?: number | undefined;
+    description?: string | undefined;
+    characters?: string | undefined;
+
+    volumeMaster?: number | undefined;
+    volumeMusic?: number | undefined;
+    volumeHitSound?: number | undefined;
+
+    scrollSpeed?: number | undefined;
+
+    keys1?: string | undefined;
+    keys2?: string | undefined;
+    keys3?: string | undefined;
+    keys4?: string | undefined;
+    keys5?: string | undefined;
+    keys6?: string | undefined;
+    keys7?: string | undefined;
+    keys8?: string | undefined;
+    keys9?: string | undefined;
+  }
+) {
+  try {
+    await prisma.user.update({
+      where: {
+        userId: id,
+      },
+      data: {
+        pfpId: userObj.pfpId,
+        description: userObj.description,
+        characters: userObj.characters,
+        settings: {
+          update: {
+            volumeMaster: userObj.volumeMaster,
+            volumeMusic: userObj.volumeMusic,
+            volumeHitSound: userObj.volumeHitSound,
+            scrollSpeed: userObj.scrollSpeed,
+            keys1: userObj.keys1,
+          },
         },
       },
     });
@@ -136,25 +192,6 @@ async function updateUsername(id: string, newUsername: string) {
         });
       }
     }
-  } catch (e) {
-    console.error(e.message);
-  } finally {
-    prisma.$disconnect;
-  }
-}
-
-async function updateSettings(id: string, settings: object) {
-  try {
-    await prisma.user.update({
-      where: {
-        userId: id,
-      },
-      data: {
-        settings: {
-          update: settings,
-        },
-      },
-    });
   } catch (e) {
     console.error(e.message);
   } finally {
@@ -351,10 +388,86 @@ async function submitScore(
         D: reformatAggGrade.D ? reformatAggGrade.D : undefined,
       },
     });
+  } catch (e) {
+    console.error(e.message);
+  } finally {
+    prisma.$disconnect;
+  }
+}
 
-    return await prisma.userScoreEntry.findMany({
-      where: idObj,
+async function getUserSongScores(
+  id: string,
+  idObj: {
+    beatmapSetId: number;
+    beatmapId: number;
+  }
+) {
+  return await prisma.userScoreEntry.findMany({
+    where: {
+      userId: id,
+      beatmapSetId: idObj.beatmapSetId,
+      beatmapId: idObj.beatmapId,
+    },
+  });
+}
+
+async function getGlobalLeaderboard() {
+  try {
+    const leaderboard = await prisma.userStats.findMany({
+      where: {
+        playCountUnique: {
+          gte: 3,
+        },
+      },
+      orderBy: [
+        { averageScore: "desc" },
+        { averageAccuracy: "desc" },
+        { highestMaxCombo: "desc" },
+      ],
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
+      },
     });
+
+    fs.writeFileSync(
+      "logs/leaderboard/global.json",
+      JSON.stringify(leaderboard)
+    );
+    return leaderboard;
+  } catch (e) {
+    console.error(e.message);
+  } finally {
+    prisma.$disconnect;
+  }
+}
+
+async function getSongLeaderboard(beatmapSetId: number, beatmapId: number) {
+  try {
+    const leaderboard = await prisma.userPlayedBeatmap.findMany({
+      where: {
+        beatmapSetId: beatmapSetId,
+        beatmapId: beatmapId,
+      },
+      orderBy: [
+        { highestScore: "desc" },
+        { highestAccuracy: "desc" },
+        { highestMaxCombo: "desc" },
+      ],
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
+      },
+    });
+
+    fs.writeFileSync("logs/leaderboard/song.json", JSON.stringify(leaderboard));
+    return leaderboard;
   } catch (e) {
     console.error(e.message);
   } finally {
@@ -363,6 +476,15 @@ async function submitScore(
 }
 
 async function main() {
+  /*   await submitScore("3", {
+    beatmapSetId: 3,
+    beatmapId: 3,
+    accuracy: 1,
+    grade: "A",
+    maxCombo: 200,
+    score: 10000,
+  }); */
+  await getSongLeaderboard(1, 1);
   await log();
 }
 
