@@ -1,6 +1,5 @@
 /* import { express, NextFunction, Request, Response } from "express"; */
 import { PrismaClient } from "@prisma/client";
-import { count } from "console";
 import fs from "fs";
 /* const express = require("express");
 
@@ -98,12 +97,12 @@ async function resetDatabase() {
   ]);
 }
 
-async function createUser(id: string, givenUsername: string) {
+async function createUser(id: string, username: string) {
   try {
     await prisma.user.create({
       data: {
         userId: id,
-        username: givenUsername,
+        username: username,
         settings: {
           create: {},
         },
@@ -121,17 +120,31 @@ async function createUser(id: string, givenUsername: string) {
 
 async function updateUser(
   id: string,
-  userObj: {
+  {
+    pfpId,
+    description,
+    characters,
+    volumeMaster,
+    volumeMusic,
+    volumeHitSound,
+    scrollSpeed,
+    keys1,
+    keys2,
+    keys3,
+    keys4,
+    keys5,
+    keys6,
+    keys7,
+    keys8,
+    keys9,
+  }: {
     pfpId?: number | undefined;
     description?: string | undefined;
     characters?: string | undefined;
-
     volumeMaster?: number | undefined;
     volumeMusic?: number | undefined;
     volumeHitSound?: number | undefined;
-
     scrollSpeed?: number | undefined;
-
     keys1?: string | undefined;
     keys2?: string | undefined;
     keys3?: string | undefined;
@@ -149,16 +162,24 @@ async function updateUser(
         userId: id,
       },
       data: {
-        pfpId: userObj.pfpId,
-        description: userObj.description,
-        characters: userObj.characters,
+        pfpId: pfpId,
+        description: description,
+        characters: characters,
         settings: {
           update: {
-            volumeMaster: userObj.volumeMaster,
-            volumeMusic: userObj.volumeMusic,
-            volumeHitSound: userObj.volumeHitSound,
-            scrollSpeed: userObj.scrollSpeed,
-            keys1: userObj.keys1,
+            volumeMaster: volumeMaster,
+            volumeMusic: volumeMusic,
+            volumeHitSound: volumeHitSound,
+            scrollSpeed: scrollSpeed,
+            keys1: keys1,
+            keys2: keys2,
+            keys3: keys3,
+            keys4: keys4,
+            keys5: keys5,
+            keys6: keys6,
+            keys7: keys7,
+            keys8: keys8,
+            keys9: keys9,
           },
         },
       },
@@ -170,12 +191,12 @@ async function updateUser(
   }
 }
 
-async function updateUsername(id: string, newUsername: string) {
+async function updateUsername(id: string, username: string) {
   try {
     try {
       await prisma.user.findUniqueOrThrow({
         where: {
-          username: newUsername,
+          username: username,
         },
       });
 
@@ -187,7 +208,7 @@ async function updateUsername(id: string, newUsername: string) {
             userId: id,
           },
           data: {
-            username: newUsername,
+            username: username,
           },
         });
       }
@@ -201,7 +222,14 @@ async function updateUsername(id: string, newUsername: string) {
 
 async function submitScore(
   id: string,
-  entry: {
+  {
+    beatmapSetId,
+    beatmapId,
+    score,
+    accuracy,
+    maxCombo,
+    grade,
+  }: {
     beatmapSetId: number;
     beatmapId: number;
     score: number;
@@ -213,8 +241,8 @@ async function submitScore(
   try {
     const idObj = {
       userId: id,
-      beatmapSetId: entry.beatmapSetId,
-      beatmapId: entry.beatmapId,
+      beatmapSetId: beatmapSetId,
+      beatmapId: beatmapId,
     };
 
     const bmRecord = await prisma.userPlayedBeatmap.findUnique({
@@ -223,24 +251,20 @@ async function submitScore(
       },
     });
 
+    console.log(bmRecord);
+
     if (bmRecord) {
       await prisma.userPlayedBeatmap.update({
         where: {
           userId_beatmapSetId_beatmapId: idObj,
         },
         data: {
-          highestScore:
-            entry.score > bmRecord.highestScore ? entry.score : undefined,
+          highestScore: score > bmRecord.highestScore ? score : undefined,
           highestAccuracy:
-            entry.accuracy > bmRecord.highestAccuracy
-              ? entry.accuracy
-              : undefined,
+            accuracy > bmRecord.highestAccuracy ? accuracy : undefined,
           highestMaxCombo:
-            entry.maxCombo > bmRecord.highestMaxCombo
-              ? entry.maxCombo
-              : undefined,
-          highestGrade:
-            entry.accuracy > bmRecord.highestAccuracy ? entry.grade : undefined,
+            maxCombo > bmRecord.highestMaxCombo ? maxCombo : undefined,
+          highestGrade: accuracy > bmRecord.highestAccuracy ? grade : undefined,
 
           playCount: {
             increment: 1,
@@ -248,10 +272,10 @@ async function submitScore(
 
           entries: {
             create: {
-              score: entry.score,
-              accuracy: entry.accuracy,
-              maxCombo: entry.maxCombo,
-              grade: entry.grade,
+              score: score,
+              accuracy: accuracy,
+              maxCombo: maxCombo,
+              grade: grade,
             },
           },
         },
@@ -297,22 +321,22 @@ async function submitScore(
       await prisma.userPlayedBeatmap.create({
         data: {
           userId: id,
-          beatmapSetId: entry.beatmapSetId,
-          beatmapId: entry.beatmapId,
+          beatmapSetId: beatmapSetId,
+          beatmapId: beatmapId,
 
-          highestScore: entry.score,
-          highestAccuracy: entry.accuracy,
-          highestMaxCombo: entry.maxCombo,
-          highestGrade: entry.grade,
+          highestScore: score,
+          highestAccuracy: accuracy,
+          highestMaxCombo: maxCombo,
+          highestGrade: grade,
 
           playCount: 1,
 
           entries: {
             create: {
-              score: entry.score,
-              accuracy: entry.accuracy,
-              maxCombo: entry.maxCombo,
-              grade: entry.grade,
+              score: score,
+              accuracy: accuracy,
+              maxCombo: maxCombo,
+              grade: grade,
             },
           },
         },
@@ -340,9 +364,6 @@ async function submitScore(
       },
       _max: {
         highestMaxCombo: true,
-      },
-      _sum: {
-        playCount: true,
       },
     });
 
@@ -373,12 +394,11 @@ async function submitScore(
           ? Math.round(agg._avg.highestScore)
           : undefined,
         averageAccuracy: agg._avg.highestAccuracy
-          ? Math.round(agg._avg.highestAccuracy)
+          ? agg._avg.highestAccuracy
           : undefined,
         highestMaxCombo: agg._max.highestMaxCombo
           ? agg._max.highestMaxCombo
           : undefined,
-        playCountUnique: agg._sum.playCount ? agg._sum.playCount : undefined,
 
         SS: reformatAggGrade.SS ? reformatAggGrade.SS : undefined,
         S: reformatAggGrade.S ? reformatAggGrade.S : undefined,
@@ -397,7 +417,10 @@ async function submitScore(
 
 async function getUserSongScores(
   id: string,
-  idObj: {
+  {
+    beatmapSetId,
+    beatmapId,
+  }: {
     beatmapSetId: number;
     beatmapId: number;
   }
@@ -405,8 +428,8 @@ async function getUserSongScores(
   return await prisma.userScoreEntry.findMany({
     where: {
       userId: id,
-      beatmapSetId: idObj.beatmapSetId,
-      beatmapId: idObj.beatmapId,
+      beatmapSetId: beatmapSetId,
+      beatmapId: beatmapId,
     },
   });
 }
@@ -476,15 +499,32 @@ async function getSongLeaderboard(beatmapSetId: number, beatmapId: number) {
 }
 
 async function main() {
-  /*   await submitScore("3", {
-    beatmapSetId: 3,
-    beatmapId: 3,
-    accuracy: 1,
+  /*   await submitScore("1", {
+    beatmapId: 4,
+    beatmapSetId: 4,
+    score: 0,
+    accuracy: Math.random(),
+    maxCombo: 0,
     grade: "A",
-    maxCombo: 200,
-    score: 10000,
+  });
+  await submitScore("2", {
+    beatmapId: 3,
+    beatmapSetId: 3,
+    score: 0,
+    accuracy: Math.random(),
+    maxCombo: 0,
+    grade: "A",
+  });
+  await submitScore("3", {
+    beatmapId: 3,
+    beatmapSetId: 3,
+    score: 0,
+    accuracy: Math.random(),
+    maxCombo: 1,
+    grade: "A",
   }); */
-  await getSongLeaderboard(1, 1);
+  // await getGlobalLeaderboard();
+  // await getSongLeaderboard(2, 2);
   await log();
 }
 
