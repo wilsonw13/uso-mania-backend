@@ -5,8 +5,8 @@
   "scripts": {
     "dev-prisma": "nodemon src/prisma.ts",
     "dev-express": "nodemon src/app.ts",
-    "start": "node src/app.ts",
-    "build": "node build src/app.ts"
+    "build": "tsc",
+    "start": "node dist/app.js"
   },
   "engines": {
     "node": "16.x"
