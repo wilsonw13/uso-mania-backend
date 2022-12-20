@@ -20,6 +20,6 @@
   "include": [
     "src/**/*.ts",
     "src/routes.js",
-    "src/app.js"
+    "src/app.ts"
   ],
 }
