@@ -5,7 +5,7 @@
   "scripts": {
     "dev-prisma": "nodemon src/prisma.ts",
     "dev-express": "nodemon src/app.ts",
-    "build": "node build src/app.js",
+    "build": "node build src/app.ts",
     "migrate": "npx prisma migrate dev"
   },
   "engines": {

@@ -2,37 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import fs from "fs";
 const prisma = new PrismaClient();
 
-export async function log() {
-  try {
-    fs.writeFileSync(
-      "logs/users.json",
-      JSON.stringify(await prisma.user.findMany())
-    );
-
-    fs.writeFileSync(
-      "logs/userSettings.json",
-      JSON.stringify(await prisma.userSettings.findMany())
-    );
-
-    fs.writeFileSync(
-      "logs/userStats.json",
-      JSON.stringify(await prisma.userStats.findMany())
-    );
-
-    fs.writeFileSync(
-      "logs/playedBeatmaps.json",
-      JSON.stringify(await prisma.userPlayedBeatmap.findMany())
-    );
-
-    fs.writeFileSync(
-      "logs/scoreEntries.json",
-      JSON.stringify(await prisma.userScoreEntry.findMany())
-    );
-  } catch (e) {
-    console.error(e.message);
-  }
-}
-
 export async function resetDatabase() {
   const deleteUsers = prisma.user.deleteMany();
   const deleteUserSettings = prisma.userSettings.deleteMany();
@@ -381,7 +350,7 @@ export async function getGlobalLeaderboard() {
     },
   });
 
-  fs.writeFileSync("logs/leaderboard/global.json", JSON.stringify(leaderboard));
+  fs.writeFileSync("logs/global-leaderboard.json", JSON.stringify(leaderboard));
   return leaderboard;
 }
 
@@ -408,7 +377,7 @@ export async function getSongLeaderboard(
     },
   });
 
-  fs.writeFileSync("logs/leaderboard/song.json", JSON.stringify(leaderboard));
+  fs.writeFileSync("logs/song-leaderboard.json", JSON.stringify(leaderboard));
   return leaderboard;
 }
 

@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
-// import router from "./routes";
+import * as prismaFunctions from "./prisma";
 
 dotenv.config();
 
