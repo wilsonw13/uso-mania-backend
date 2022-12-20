@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "sourceMap": true,
     "outDir": "dist",
     "strict": true,
     "lib": [
@@ -17,6 +16,6 @@
     "dist"
   ],
   "include": [
-    "src/**/*.ts",
+    "src/**/*",
   ],
 }
