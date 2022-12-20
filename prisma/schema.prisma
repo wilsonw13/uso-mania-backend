@@ -1,12 +1,11 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider             = "mysql"
-  url                  = env("PRODUCTION_DATABASE_URL")
-  referentialIntegrity = "prisma"
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
@@ -42,6 +41,8 @@ model UserSettings {
   keys7 String @default("SDF JKL") @db.VarChar(7)
   keys8 String @default("ASDFJKL;") @db.VarChar(8)
   keys9 String @default("ASDF JKL;") @db.VarChar(9)
+
+  @@index([userId])
 }
 
 model UserStats {
@@ -59,6 +60,8 @@ model UserStats {
   B  Int @default(0)
   C  Int @default(0)
   D  Int @default(0)
+
+  @@index([userId])
 }
 
 model UserPlayedBeatmap {
@@ -77,6 +80,7 @@ model UserPlayedBeatmap {
   entries UserScoreEntry[]
 
   @@id([userId, beatmapSetId, beatmapId])
+  @@index([userId])
 }
 
 model UserScoreEntry {
@@ -92,4 +96,6 @@ model UserScoreEntry {
   accuracy Float
   maxCombo Int
   grade    String @db.VarChar(2)
+
+  @@index([userId, beatmapSetId, beatmapId])
 }

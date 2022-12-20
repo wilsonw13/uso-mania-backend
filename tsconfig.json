@@ -3,18 +3,23 @@
     "sourceMap": true,
     "outDir": "dist",
     "strict": true,
-    "lib": ["ES2022"],
+    "lib": [
+      "ES2022"
+    ],
     "esModuleInterop": true,
     "useUnknownInCatchVariables": false,
-    "module": "CommonJS",
-    "moduleResolution": "Node",
     "allowJs": true,
+  },
+  "ts-node": {
+    "esm": true,
   },
   "exclude": [
     "node_modules",
     "dist"
   ],
   "include": [
-    "src/**/*.ts"
-, "src/routes.js", "src/app.js"  ],
+    "src/**/*.ts",
+    "src/routes.js",
+    "src/app.js"
+  ],
 }

@@ -1,7 +1,12 @@
 {
+    "watch": [
+        "src"
+    ],
+    "ext": "ts, json",
     "ignore": [
         "node_modules/**",
         ".gitignore",
         "logs/*"
-    ]
+    ],
+    "exec": "ts-node --esm"
 }

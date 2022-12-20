@@ -413,34 +413,38 @@ export async function getSongLeaderboard(
 }
 
 export async function main() {
+  // await createUser("1", "user1");
+  // await createUser("2", "user2");
+  // await createUser("3", "user3");
+
   // await submitScore("1", {
-  //   beatmapId: 5,
-  //   beatmapSetId: 5,
-  //   score: 0,
+  //   beatmapId: 50,
+  //   beatmapSetId: 50,
+  //   score: 1123000,
   //   accuracy: Math.random(),
-  //   maxCombo: 10000,
+  //   maxCombo: 102300,
   //   grade: "A",
   // });
   // await submitScore("2", {
-  //   beatmapId: 3,
-  //   beatmapSetId: 3,
-  //   score: 0,
+  //   beatmapId: 50,
+  //   beatmapSetId: 50,
+  //   score: 1123234,
   //   accuracy: Math.random(),
-  //   maxCombo: 0,
+  //   maxCombo: 5326,
   //   grade: "A",
   // });
   // await submitScore("3", {
-  //   beatmapId: 3,
-  //   beatmapSetId: 3,
-  //   score: 0,
+  //   beatmapId: 50,
+  //   beatmapSetId: 50,
+  //   score: 2123512,
   //   accuracy: Math.random(),
-  //   maxCombo: 1,
-  //   grade: "A",
+  //   maxCombo: 31323,
+  //   grade: "C",
   // });
   // await getGlobalLeaderboard();
-  // await getSongLeaderboard(2, 2);
-  await log();
-  console.log("hello");
+  // await getSongLeaderboard(3, 3);
+  // await log();
+  console.log("main()");
 }
 
 main();
