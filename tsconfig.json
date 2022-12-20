@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "outDir": "api",
+    "sourceMap": true,
+    "outDir": "dist",
     "strict": true,
     "lib": [
       "ES2022"
@@ -16,6 +17,6 @@
     "api"
   ],
   "include": [
-    "src/**/*",
+    "src/**/*.ts",
   ],
 }
