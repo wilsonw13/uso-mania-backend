@@ -17,3 +17,5 @@ app.use("/", router); */
 app.listen(port, () => {
   console.log(`[server]: Server is up on ${port}`);
 });
+
+module.exports = app;

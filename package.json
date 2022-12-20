@@ -6,7 +6,7 @@
     "dev-prisma": "nodemon src/prisma.ts",
     "dev-express": "nodemon src/app.ts",
     "build": "tsc",
-    "start": "node dist/app.js"
+    "start": "node api/app.js"
   },
   "engines": {
     "node": "16.x"
