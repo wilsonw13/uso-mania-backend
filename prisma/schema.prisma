@@ -1,10 +1,11 @@
-generator client {
-  provider = "prisma-client-js"
+generator db {
+  provider  = "prisma-client-py"
+  interface = "sync"
 }
 
 datasource db {
   provider     = "mysql"
-  url          = env("DATABASE_URL")
+  url          = env("DATABASE_DEV_URL")
   relationMode = "prisma"
 }
 
